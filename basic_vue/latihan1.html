@@ -15,7 +15,19 @@
     <div id="app">
       <header>
         <img src="image/logo.png" width="80" alt="" />
-        <h1 v-once>{{ isActive ? 'success' : 'danger' }}</h1>
+        <h1>{{ getName() }}</h1>
+        <h3>{{ fullName }}</h3>
+        <label for="name">Name</label>
+        <input
+          type="text"
+          name="name"
+          v-model="newName"
+          @input="updateName()"
+        />
+        <br /><br />
+        <h3>{{ numMessage }}</h3>
+        <label for="num">Input Number for Check</label>
+        <input type="text" name="num" v-model="num" @input="getNumber()" />
         <p>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa velit
           facilis assumenda, maiores nulla deleniti in maxime voluptates
@@ -28,16 +40,52 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
     <script>
-      // menginisialisasikan data diluar object
-      const data = {
-        name: "Izuchii",
-        message: "Hello Izuchii",
-        isActive: true,
-      };
-
       const vm = new Vue({
         el: "#app",
-        data: data,
+        data: {
+          name: "Izuchii",
+          message: "Hello Izuchii",
+          isActive: true,
+          qty: 1,
+          namaDepan: "Luthfi",
+          namaBelakang: "Nur Ramadhan",
+          number: 0,
+          numMessage: "Masukkan Nomor",
+        },
+        methods: {
+          getName: function () {
+            return "Halo " + this.name;
+          },
+          updateName: function (newName) {
+            this.name = this.newName;
+          },
+          getNumber: function (num) {
+            // this.number = this.num;
+            // if (parseInt(this.num) % 2 == 0) {
+            //   this.numMessage = "Number " + this.number + " adalah genap";
+            // } else if (parseInt(this.num) % 2 == 1) {
+            //   this.numMessage = "Number " + this.number + " adalah ganjil";
+            // } else {
+            //   this.numMessage = "Yang anda masukkan bukan number";
+            // }
+            this.number = this.num.toString();
+            if (isNaN(this.num)) {
+              this.numMessage = "Input bukan angka";
+            } else if (parseInt(this.num) % 2 == 0) {
+              this.numMessage = "Number " + this.number + " adalah genap";
+            } else {
+              this.numMessage = "Number " + this.number + " adalah ganjil";
+            }
+          },
+        },
+        computed: {
+          totalPay: function () {
+            return this.qty * 10000;
+          },
+          fullName: function () {
+            return this.namaDepan + " " + this.namaBelakang;
+          },
+        },
       });
     </script>
   </body>
