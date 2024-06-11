@@ -9,6 +9,10 @@
         margin: 5%;
         font-family: "Quicksand", sans-serif;
       }
+      .active {
+        background-color: salmon;
+        border: 0;
+      }
     </style>
   </head>
   <body>
@@ -19,21 +23,32 @@
         <h1 v-text="name"></h1>
         <h3>{{ fullName }}</h3>
         <label for="name">Name</label>
-        <input type="text" name="name" v-model="newName" @input="updateName()" />
+        <input
+          type="text"
+          name="name"
+          v-model="newName"
+          @input="updateName()"
+        />
         <br /><br />
         <h3>{{ numMessage }}</h3>
         <label for="num">Input Number for Check</label>
         <input type="text" name="num" v-model="num" @input="getNumber()" />
 
-        <br /> <br /> <br />
+        <br />
+        <br />
+        <br />
         <img :src="image" alt="" style="display: block" width="300" />
         <button v-on:click="qty++">Click Kafka</button>
         <p v-text="qty"></p>
         <p>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa velit
           facilis assumenda, maiores nulla deleniti in maxime voluptates
-          adipisci aperiam.
+          adipisci aperiam. a
         </p>
+
+        <button v-bind:class="{active: menu === 'home'}" v-on:click="menu = 'home'">Home</button>
+        <button v-bind:class="{active: menu === 'about'}" v-on:click="menu = 'about'">About</button>
+        <button v-bind:class="{active: menu === 'blog'}" v-on:click="menu = 'blog'">Blog</button>
       </header>
 
       <footer id="footer"><p>copyright 2024</p></footer>
@@ -44,6 +59,7 @@
       const vm = new Vue({
         el: "#app",
         data: {
+          menu: 'home',
           name: "Izuchii",
           message: "Hello Izuchii",
           isActive: true,
@@ -52,7 +68,7 @@
           namaBelakang: "Nur Ramadhan",
           number: 0,
           numMessage: "Masukkan Nomor",
-          image: 'image/Kafka-Render.png'
+          image: "image/Kafka-Render.png",
         },
         methods: {
           getName: function () {
