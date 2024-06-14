@@ -3,7 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Learn Vue</title>
+    <title>Computed Properties Vue</title>
+    <style>
+      .active {
+        background-color: skyblue;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <div id="app">
+      <button v-bind:class="{active: menu == 'home'}" v-on:click="menu = 'home'">Home</button>
+      <button v-bind:class="{active: menu == 'about'}" v-on:click="menu = 'about'">About</button>
+      <button v-bind:class="{active: menu == 'profile'}" v-on:click="menu = 'profile'">Profile</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
+    <script>
+      const vm = new Vue({
+        el: "#app",
+        data: {
+          menu: 'home'
+        },
+      });
+    </script>
+  </body>
 </html>
