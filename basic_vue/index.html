@@ -7,36 +7,27 @@
   </head>
   <body>
     <div id="app">
-      <user-item v-for="(user, index) in users" :user="user"></user-item>
-      <button @click="shuffleUsers">Shuffle Users</button>
+      <h1>Mencari bilangan Genap</h1>
+
+      <ul>
+        <li v-for="x in cariBilanganGenap(numbers)">{{ x }}</li>
+      </ul>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
     <script>
-      Vue.component('user-item', {
-        props: ['user'],
-        data() {
-          return {
-            name: this.user.name
-          };
-        },
-        template: '<div><input v-model="name"></div>'
-      });
-
       new Vue({
-        el: '#app',
+        el: "#app",
         data: {
-          users: [
-            { id: 1, name: 'Alice' },
-            { id: 2, name: 'Bob' },
-            { id: 3, name: 'Charlie' }
-          ]
+          numbers: [1, 2, 3, 4, 5]
         },
         methods: {
-          shuffleUsers() {
-            this.users = this.users.sort(() => Math.random() - 0.5);
+          cariBilanganGenap: function(data) {
+            return data.filter(i => {
+              return i % 2 == 0;
+            })
           }
-        }
+        },
       });
     </script>
   </body>
