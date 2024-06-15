@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Javascript Asik</title>
+  </head>
+  <body>
+    <h1>Catatanmu Hari ini...</h1>
+    <ul id="list-notes">
+      <li>Hutao Wangy <a href="#" onclick="deleteNote(this)">Hapus</a></li>
+    </ul>
+
+    <button type="submit" onclick="createNotes()">Tambah Notes</button>
+    <button type="submit" onclick="toggleSort()">Filter Notes</button>
+
+    <script>
+      var title = document.querySelector("h1");
+      console.log(title.innerHTML.toLowerCase());
+      //   b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()
+      let ascending = true; // Variable to track sorting order
+
+      function createNotes() {
+        var newNotes = prompt("Tambah Catatan Baru");
+        if (newNotes) {
+          const newLi = document.createElement("li");
+          newLi.textContent = newNotes + " ";
+          const deleteLink = document.createElement("a");
+          deleteLink.href = "#";
+          deleteLink.textContent = "Hapus";
+          deleteLink.onclick = function () {
+            deleteNote(deleteLink);
+          };
+          newLi.appendChild(deleteLink);
+          const listNotes = document.getElementById("list-notes");
+          listNotes.appendChild(newLi);
+        }
+      }
+
+      function deleteNote(element) {
+        const li = element.parentElement;
+        li.remove();
+      }
+
+      function toggleSort() {
+        ascending = !ascending; // Toggle the sorting order
+        shortList();
+      }
+
+      function shortList() {
+        var list, i, switching, b, shouldSwitch;
+        list = document.getElementById("list-notes");
+        switching = true;
+
+        while (switching) {
+          switching = false;
+          b = list.getElementsByTagName("li");
+          for (i = 0; i < b.length - 1; i++) {
+            shouldSwitch = false;
+            if (ascending) {
+              if (
+                b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()
+              ) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (
+              b[i].innerHTML.toLowerCase() < b[i + 1].innerHTML.toLowerCase()
+            ) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+          if (shouldSwitch) {
+            b[i].parentNode.insertBefore(b[i + 1], b[i]);
+            switching = true;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Vue</title>
+</head>
+<body>
+    <div id="app">
+        <h1>Learn Vue</h1>
+        <input type="checkbox" value="React" v-model="checked">React
+        <input type="checkbox" value="Vue" v-model="checked">Vue
+        <input type="checkbox" value="Angular" v-model="checked">Angular
+        <p>Yang anda pilih : {{ selectedValues }}</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                checked: []
+            },
+            computed: {
+                selectedValues: function() {
+                    return this.checked.join(', ');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
