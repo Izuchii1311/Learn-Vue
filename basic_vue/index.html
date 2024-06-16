@@ -7,11 +7,13 @@
   </head>
   <body>
     <div id="app">
-      <h1>Mencari bilangan Genap</h1>
-
-      <ul>
-        <li v-for="x in cariBilanganGenap(numbers)">{{ x }}</li>
-      </ul>
+      <h1>Conditional Rendering</h1>
+      <template v-if="active">
+        <h3>Data ada</h3>
+      </template>
+      <template v-else>
+        <h3>Data ga ada</h3>
+      </template>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
@@ -19,15 +21,8 @@
       new Vue({
         el: "#app",
         data: {
-          numbers: [1, 2, 3, 4, 5]
-        },
-        methods: {
-          cariBilanganGenap: function(data) {
-            return data.filter(i => {
-              return i % 2 == 0;
-            })
-          }
-        },
+          active: true
+        }
       });
     </script>
   </body>
