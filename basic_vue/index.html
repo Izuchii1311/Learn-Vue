@@ -12,12 +12,17 @@
   </head>
   <body>
     <div id="app">
-      <label for="name">Nama Lengkap</label>
-      <input type="text" placeholder="Masukkan nama anda..." name="name" v-on:keyup.enter="submit">
+      <select v-model="selected">
+        <option disabled value="">Please select one</option>
+        <option v-for="option in options" v-bind:value="option.text">
+          {{ option.text }}
+        </option>
+      </select>
 
-      <template v-if="nama.length > 1">
-        <div v-for="data in nama" v-text="data"></div>
-      </template>
+      <p>
+        Yang dipilih :
+        <li>{{ selected }}</li>
+      </p>
     </div>
 
 
@@ -26,14 +31,12 @@
       let contoh = new Vue({
         el: "#app",
         data: {
-          nama: ['Izuchii', "Luthfi", "Frieren"]
-        },
-        methods: {
-          submit: function(nama) {
-            let newName = nama.target.value;    // digunakan menangkap value dari inputan
-            this.nama.push(newName);            // digunakan push / memasukkan data ke dalam array
-            nama.target.value = '';             // mengosongkan kembali value inputan
-          } 
+          selected: '',
+          options: [
+            { value: 'Vue', text: 'Vue' },
+            { value: 'React', text: 'React' },
+            { value: 'Angular', text: 'Angular' }
+          ]
         }
       });
     </script>

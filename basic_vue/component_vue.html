@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Js</title>
+</head>
+<body>
+    <div id="app">
+        <header-component></header-component>
+
+        <main>
+            <button-counter></button-counter>
+            <button-counter></button-counter>
+            <paragraf-component></paragraf-component>
+        </main>
+
+        <footer-component></footer-component>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
+    <script>
+        Vue.component('header-component', {
+            template: `<header>
+                            <img src="image/logo.png" alt="" width="150">
+                            <p>The Progressive Javascript Framework</p>
+                            <p>{{ message }}</p>
+                        </header>`,
+            data: function() {
+                return {
+                    message: 'Hai Izuchii'
+                }
+            }
+        })
+        Vue.component('button-counter',{
+            data: function() {
+                return {
+                    count: 0
+                }
+            },
+            template: '<button type="button" v-on:click="count++">Anda mengklik saya {{ count }} kali.</button>'
+        }); 
+        Vue.component('paragraf-component', {
+            template: `
+            <div>
+                <p>Ini adalah paragraf yang dibuat menggunakan component Vue js.</p>
+                <p>Ini adalah paragraf yang dibuat menggunakan component Vue js.</p>
+                <p>Ini adalah paragraf yang dibuat menggunakan component Vue js.</p>
+                <p>Ini adalah paragraf yang dibuat menggunakan component Vue js.</p>
+            </div>
+            `
+        })
+        Vue.component('footer-component', {
+            template: `<footer>
+                            <p>Copyright 2024</p>
+                        </footer>`
+        })
+        new Vue({
+            el: '#app'
+        });
+    </script>
+</body>
+</html>
