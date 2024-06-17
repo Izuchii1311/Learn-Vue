@@ -4,24 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vue</title>
+    <style>
+      .active {
+        background-color: salmon;
+      }
+    </style>
   </head>
   <body>
     <div id="app">
-      <h1>Conditional Rendering</h1>
-      <template v-if="active">
-        <h3>Data ada</h3>
-      </template>
-      <template v-else>
-        <h3>Data ga ada</h3>
+      <label for="name">Nama Lengkap</label>
+      <input type="text" placeholder="Masukkan nama anda..." name="name" v-on:keyup.enter="submit">
+
+      <template v-if="nama.length > 1">
+        <div v-for="data in nama" v-text="data"></div>
       </template>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
     <script>
-      new Vue({
+      let contoh = new Vue({
         el: "#app",
         data: {
-          active: true
+          nama: ['Izuchii', "Luthfi", "Frieren"]
+        },
+        methods: {
+          submit: function(nama) {
+            let newName = nama.target.value;    // digunakan menangkap value dari inputan
+            this.nama.push(newName);            // digunakan push / memasukkan data ke dalam array
+            nama.target.value = '';             // mengosongkan kembali value inputan
+          } 
         }
       });
     </script>
