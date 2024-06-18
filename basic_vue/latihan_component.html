@@ -1,15 +1,16 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vue Js</title>
+    <title>Component</title>
 </head>
 <body>
     <div id="app">
         <header-component></header-component>
 
         <main>
+            <home-component></home-component>
             <language-component v-bind:language="language" v-bind:input="newLanguage"></language-component>
         </main>
 
@@ -30,12 +31,10 @@
                 }
             }
         })
-
         Vue.component('paragraf-component', {
             props: ['title', 'author'],
             template: ` <p>Ini adalah paragraf yang dibuat menggunakan component {{ title }}. {{ author }}</p> `
         })
-
         Vue.component('language-component', {
             props: ['language', 'input'],
             template: `<div>
@@ -62,7 +61,6 @@
                 }
             }
         })  
-
         Vue.component('button-counter',{
             data: function() {
                 return {
@@ -76,12 +74,19 @@
                             <p>Copyright 2024</p>
                         </footer>`
         })
-        
+
+        const Home = {
+            template: `<H1>Home Page</H1>`
+        }
+
         let vm = new Vue({
             el: '#app',
             data: {
                 language: ['Golang', 'Java', 'JavaScript', 'PHP', 'Ruby', 'Python'],
                 newLanguage: ''
+            },
+            components: {
+                'home-component': Home
             }
         });
     </script>
