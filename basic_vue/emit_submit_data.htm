@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emit Event Component</title>
+</head>
+<body>
+    <div id="app">
+        <main>
+            <language-component v-bind:language="language" v-bind:input="newLanguage" v-on:hapus="hapus" v-on:submit="submit"></language-component>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0/dist/vue.js"></script>
+    <script>
+        Vue.component('language-component', {
+            props: ['language', 'hapus'],
+            template: `<div>
+                        <h3>Tambah Bahasa Pemrograman</h3>
+                        <p> 
+                            <input type="text" placeholder="Masukkan bahasa pemrograman baru..." v-on:keyup.enter="$emit('submit', $event)">
+                        </p>
+                        <hr>
+                        <h3>Daftar Bahasa Pemrograman</h3>
+                        <template v-if="language.length > 0">
+                            <ul>
+                                <li v-for="(item, index) in language">{{ index + 1 }} - {{ item }} - 
+                                    <a href="" v-on:click.prevent="$emit('hapus', index)">Hapus</a>
+                                </li>
+                            </ul>
+                        </template>
+                        <li v-else>Bahasa Pemrograman Belum Tersedia</li>
+                    </div>`,
+        })  
+
+        let vm = new Vue({
+            el: '#app',
+            data: {
+                language: ['Golang', 'Java', 'JavaScript', 'PHP', 'Ruby', 'Python'],
+                newLanguage: ''
+            },
+            methods: {
+                hapus: function(index) {
+                    this.language.splice(index, 1);
+                },
+                submit: function(data) {
+                    this.language.push(data.target.value);
+                    this.newLanguage = '';
+                },
+            }
+        });
+    </script>
+</body>
+</html>
