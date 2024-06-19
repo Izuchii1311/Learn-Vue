@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue Router Example</title>
+    <!-- CDN untuk Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- CDN untuk Vue Router -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@3/dist/vue-router.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Vue Router Example</h1>
+        <p>
+            <router-link to="/">Home</router-link>
+            <router-link to="/about">About</router-link>
+            <router-link to="/contact">Contact</router-link>
+        </p>
+        <router-view></router-view>
+    </div>
+
+    <script>
+        // Definisikan beberapa komponen
+        const Home = {
+            template: '<div><h2>Home Page</h2><p>Welcome to the home page!</p></div>'
+        };
+
+        const About = {
+            template: '<div><h2>About Page</h2><p>This is the about page.</p></div>'
+        };
+
+        const Contact = {
+            template: '<div><h2>Contact Page</h2><p>Contact us at contact@example.com.</p></div>'
+        };
+
+        // Konfigurasikan router
+        const routes = [
+            { path: '/', component: Home },
+            { path: '/about', component: About },
+            { path: '/contact', component: Contact }
+        ];
+
+        const router = new VueRouter({
+            routes
+        });
+
+        // Buat instance Vue dan hubungkan router
+        const app = new Vue({
+            el: '#app',
+            router
+        });
+    </script>
+</body>
+</html>
