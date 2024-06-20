@@ -43,8 +43,11 @@
                         <h3>Daftar Bahasa Pemrograman</h3>
                         <template v-if="language.length > 0">
                             <ul>
-                                <li v-for="(item, index) in language">{{ index + 1 }} - {{ item }} - 
-                                    <a href="" v-on:click.prevent="$emit('hapus', index)">Hapus</a>
+                                <li v-for="(item, index) in language">{{ index + 1 }} - {{ item.name }} - 
+                                    <a href="" v-on:click.prevent="$emit('hapus', item.id)">Hapus</a>
+
+                                    <p>{{ item.description }}</p>
+                                    <img src="/image/{{ item.image }}" alt="">
                                 </li>
                             </ul>
                         </template>
@@ -61,6 +64,7 @@
 
         // Create the router instance
         const router = new VueRouter({
+            mode: 'history',
             routes
         });
 
@@ -69,12 +73,18 @@
             el: '#app',
             router: router,
             data: {
-                language: ['Golang', 'Java', 'JavaScript', 'PHP', 'Ruby', 'Python'],
+                // language: ['Golang', 'Java', 'JavaScript', 'PHP', 'Ruby', 'Python'],
+                language: [
+                    {id: 1, name: "React Native", description:"React Native is a React Native", image:"logo.png"},
+                    {id: 2, name: "Vue Js", description:"Vue Js is a Vue Js", image:"logo.png"},
+                    {id: 3, name: "Angular", description:"Angular is a Angular", image:"logo.png"},
+                ],
                 newLanguage: ''
             },
             methods: {
-                hapus: function(index) {
-                    this.language.splice(index, 1);
+                hapus: function(id) {
+                    // kondisi ketika item.id tidak sama dengan id maka akan secara default dihilangkan
+                    this.language = this.language.filter(item => item.id != id)
                 },
                 submit: function(data) {
                     this.language.push(data.target.value);
