@@ -34,11 +34,27 @@
         
         const Lang = {
             props: ['language', 'hapus'],
+            // <p> <input type="text" placeholder="Masukkan bahasa pemrograman baru..." v-on:keyup.enter="$emit('submit', $event)"> </p>
             template: `<div>
                         <h3>Tambah Bahasa Pemrograman</h3>
-                        <p> 
-                            <input type="text" placeholder="Masukkan bahasa pemrograman baru..." v-on:keyup.enter="$emit('submit', $event)">
-                        </p>
+
+                        <form action="" v-on:submit.prevent="submitData">
+                            <p><input type="text" name="" id="" v-model="language.name" placeholder="Nama Bahasa Pemrograman"></p>
+
+                            <div class="input-group">
+                                <label for="">Masukkan Gambar</label>
+                                <br>
+                                <textarea name="" id="" v-model="language.description"></textarea>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="">Masukkan Gambar</label>
+                                <br>
+                                <input type="file" name="" id="">
+                            </div>
+                            <button type="submit">Save</button>
+                        </form>
+
                         <hr>
                         <h3>Daftar Bahasa Pemrograman</h3>
                         <template v-if="language.length > 0">
@@ -53,6 +69,22 @@
                         </template>
                         <li v-else>Bahasa Pemrograman Belum Tersedia</li>
                     </div>`,
+                    data: function() {
+                        return {
+                            language: {
+                                name: '',
+                                description: '',
+                                image: '',
+                            }
+                        }
+                    },
+                    methods: {
+                        submitData: function(data) {
+                            console.log(this.data);
+                            // this.language.push(data.target.value);
+                            // this.newLanguage = '';
+                        }
+                    }
         }
 
         // Membuat router configuration
@@ -90,6 +122,9 @@
                     this.language.push(data.target.value);
                     this.newLanguage = '';
                 },
+                submitData: function(data) {
+
+                }
             }
         });
     </script>
