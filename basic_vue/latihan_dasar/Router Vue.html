@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Vue Router</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <!-- Vue Js -->
+    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
+
+    <!-- Custom Style -->
+    <style>
+        h2 {
+            cursor: pointer;
+        }
+        .active {
+            background-color: pink;
+            padding: 5px;
+            transform: scale(1.1);
+            transition: transform 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="app mt-5">
+        <!-- Send data from parent to Child Component -->
+        <header-component v-bind:message="message" v-bind:status="status" v-bind:vue_link="vue_link"></header-component>
+
+        <div class="d-flex justify-content-center">
+            <router-link to="/" class="mx-2">Home</router-link>
+            <router-link to="/blogs" class="mx-2">Blogs</router-link>
+            <router-link to="/add-blog" class="mx-2">Add Blog</router-link>
+            <router-link to="/about" class="mx-2">About</router-link>
+            <router-link to="/contact-us" class="mx-2">Contact Us</router-link>
+        </div>
+
+        <div class="row mt-5 justify-content-center">
+            <div class="col-lg-10 text-center">
+                <router-view v-bind:authors="authors" v-bind:blogs="blogs" v-on:add-blog="addBlog" v-on:delete-blog="deleteBlog"></router-view>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.__VUE_PROD_DEVTOOLS__ = true;
+
+
+        Vue.component('header-component', {
+            // Save data to props to get data from parent
+            props: ['message', 'status', 'vue_link'],
+            template: `
+                <div>
+                    <h1 class="text-center" v-text="message"></h1>
+                    <div v-bind:class="status ? 'd-flex justify-content-center align-items-center' : 'd-none'" v-once>
+                        <img src="../image/logo.png" alt="Vue.js" width="100" class="my-2 mx-2">
+                        <p class="mx-2">
+                            Welcome, hopefully you like use <a v-bind:href="vue_link" target="_blank">Vue.js</a> <br>
+                            Created by.Izuchii
+                        </p>
+                    </div>
+                </div>
+            `
+        })
+
+        // local scope variabel components
+        const Home = {
+            template: `<div class="home"><h1>Home Page</h1></div>`
+        }
+
+        const Blogs = {
+            props: ['blogs'],
+            template: `
+                <div class="row justify-content-center">
+                    <div class="col-md-3" v-for="(blog, index) in blogs" :key="blog.id">
+                        <div class="card">
+                            <img v-bind:src="'../image/' + blog.image" class="card-img-top" :alt="blog.title">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ blog.title }}</h5>
+                                <p class="card-text">{{ blog.description }}</p>
+                                <a href="#" v-on:click.prevent="showAlert(blog.description)" class="btn btn-primary">Baca</a>
+                                <button v-on:click="deleteBlog(index)" class="btn btn-danger mt-2">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            methods: {
+                showAlert: function(description) {
+                    alert(description);
+                },
+                deleteBlog: function(index) {
+                    this.$emit('delete-blog', index);
+                }
+            }
+        }
+
+        const AddBlog = {
+            template: `
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="add-blog">
+                            <h2>Add a New Blog</h2>
+
+                            <form v-on:submit.prevent="submitBlog">
+                                
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" v-model="newBlog.title" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" v-model="newBlog.description" required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Add Blog</button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `,
+            data: function() {
+                return {
+                    newBlog: {
+                        title: '',
+                        description: '',
+                        image: 'logo.png'
+                    }
+                }
+            },
+            methods: {
+                submitBlog() {
+                    // this.newBlog diambil dari v-model
+                    // console.log(this.newBlog.title, this.newBlog.description)
+                    this.$emit('add-blog', this.newBlog);
+                    this.newBlog = {
+                        title: '',
+                        description: '',
+                        image: '',
+                    };
+                }
+            }
+        }
+
+        const About = {
+            template: `<div class="home"><h1>About Page</h1></div>`
+        }
+        
+        const ContactUs = {
+            props: ['authors'],
+            template: 
+            `
+                <div>
+                    <h5>Created By :</h5>
+                    <div v-for="(author, index) in authors" :key="author.id">
+                        {{ index + 1 }}. {{ author }}
+                        <a href="" v-on:click.prevent="deleteAuthor(index)">hapus</a>
+                    </div>
+                    
+                    <input type="text" name="new_author" v-on:keyup.enter="saveNewAuthor" class="mt-5" placeholder="Input new Author">
+                </div>
+            `,
+            methods: {
+                saveNewAuthor: function(name) {
+                    this.authors.push(name.target.value);
+                    name.target.value = '';
+                },
+                deleteAuthor: function(index) {
+                    this.authors.splice(index, 1);
+                }
+            }
+        }
+
+
+        // create local scope routes
+        const routes = [
+            { path: '/', component: Home },
+            { path: '/blogs', component: Blogs },
+            { path: '/add-blog', component: AddBlog },
+            { path: '/about', component: About },
+            { path: '/contact-us', component: ContactUs }
+        ];
+
+        const router = new VueRouter({
+            routes: routes,
+            mode: 'history',
+        })
+
+        // vue Object
+        const vm = new Vue({
+            'el': '.app',
+            router,
+            'data': {
+                message: "Hello Vue.js",
+                vue_link: 'https://v2.vuejs.org/',
+                status: true,
+                authors: ['Izuchii✨', 'Hutao💖'],
+                blogs: [
+                    {
+                        'title': 'Latihan Vue.js', 
+                        'description': "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde quibusdam rerum tenetur. Suscipit, nemo a?",
+                        'image': 'logo.png'
+                    },
+                    {
+                        'title': 'Kafka', 
+                        'description': "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat ratione ex, vel blanditiis consectetur incidunt sunt necessitatibus excepturi? Libero, quod?",
+                        'image': 'kafka.png'
+                    },
+                    {
+                        'title': 'Test', 
+                        'description': "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui illum ea quisquam?",
+                        'image': 'test.jpg'
+                    },
+                ],
+            },
+            methods: {
+                addBlog(newBlog) {
+                    this.blogs.push(newBlog);
+                },
+                deleteBlog(index) {
+                    this.blogs.splice(index, 1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
