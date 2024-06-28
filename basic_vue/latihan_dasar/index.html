@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Form Validation</title>
+    <!-- Include Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- Include Vue Router -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@3.5.3/dist/vue-router.js"></script>
+</head>
+<body>
+    <div id="app">
+        <form @submit.prevent="submitForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" v-model="formData.username">
+            <span v-if="formErrors.username" style="color: red;">{{ formErrors.username }}</span>
+            <br><br>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" v-model="formData.password">
+            <span v-if="formErrors.password" style="color: red;">{{ formErrors.password }}</span>
+            <br><br>
+            
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Define routes (dummy route for this example)
+        const routes = [
+            { path: '/', redirect: '/form' },
+            { path: '/form', component: { template: '<div>Form Component</div>' } }
+        ];
+
+        // Create router instance
+        const router = new VueRouter({
+            routes
+        });
+
+        // Vue instance
+        new Vue({
+            el: '#app',
+            data: {
+                formData: {
+                    username: '',
+                    password: ''
+                },
+                formErrors: {}
+            },
+            methods: {
+                submitForm() {
+                    // Basic validation
+                    this.formErrors = {};
+                    if (!this.formData.username) {
+                        this.formErrors.username = 'Username is required.';
+                    }
+                    if (!this.formData.password) {
+                        this.formErrors.password = 'Password is required.';
+                    }
+
+                    // If no errors, proceed to submit (for demonstration, we just log the data)
+                    if (Object.keys(this.formErrors).length === 0) {
+                        console.log('Form submitted:', this.formData);
+                        // You can navigate using router like this
+                        router.push('/form');
+                    }
+                }
+            },
+            router
+        });
+    </script>
+</body>
+</html>

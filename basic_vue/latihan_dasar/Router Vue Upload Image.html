@@ -106,13 +106,28 @@
                                 
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="title" v-model="newBlog.title" required>
+                                    <input type="text" class="form-control" id="title" v-model="newBlog.title">
+                                    <div class="invalid-feedback" v-if="error.title">
+                                        {{ error.title }}
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" id="description" v-model="newBlog.description" required></textarea>
+                                    <textarea class="form-control" id="description" v-model="newBlog.description"></textarea>
+                                    <div class="invalid-feedback" v-if="error.description">
+                                        {{ error.description }}
+                                    </div>
                                 </div>
+
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Image</label>
+                                    <img v-bind:src="previewImage" v-if="previewImage">
+                                    <input type="file" ref="gambar" name="image" id="image" v-on:change="upload">
+                                </div>
+
+                                <div class="invalid-feedback" v-show="error.title">{{ error.title }}</div>
+                                <div class="invalid-feedback" v-show="error.description">{{ error.description }}</div>
 
                                 <button type="submit" class="btn btn-primary">Add Blog</button>
 
@@ -121,29 +136,62 @@
                     </div>
                 </div>
             `,
-            data: function() {
+            data() {
                 return {
                     newBlog: {
                         title: '',
                         description: '',
                         image: ''
                     },
-                    previewImage: ""
+                    previewImage: "",
+                    // validation
+                    error: {
+                        title: '',
+                        description: '',
+                        // image: ''
+                    }
                 }
             },
             methods: {
                 submitBlog: function() {
-                    // this.newBlog diambil dari v-model
-                    // console.log(this.newBlog.title, this.newBlog.description)
-                    this.$emit('add-blog', this.newBlog);
-                    this.newBlog = {
-                        title: '',
-                        description: '',
-                        image: '',
-                    };
-                },
-                upload: function() {
+                    // check validation
+                    let isValid = true;
+                    // Dalam method submitBlog:
+                    if (this.newBlog.title == '') {
+                        this.error.title = 'Title is required.';
+                        console.log(this.error.title);
+                        isValid = false;
+                    } else {
+                        this.error.title = ''; // Reset pesan kesalahan jika valid
+                    }
 
+                    if (this.newBlog.description == '') {
+                        this.error.description = 'Description is required.';
+                        console.log(this.error.description);
+                        isValid = false;
+                    } else {
+                        this.error.description = ''; // Reset pesan kesalahan jika valid
+                    }
+
+                    if (isValid) {
+                        // this.newBlog diambil dari v-model
+                        this.$emit('add-blog', this.newBlog);
+                        this.newBlog = {
+                            title: '',
+                            description: '',
+                            image: '',
+                        };
+                        this.previewImage = '';
+
+                        // reset input type file
+                        this.$refs.gambar.value = '';
+                    }
+                },
+                upload: function(data) {
+                    const nameImage = data.target.files[0].name;
+                    // save name image to Object newBlog
+                    this.newBlog.image = nameImage;
+                    this.previewImage = URL.createObjectURL(data.target.files[0]);
                 }
             }
         }
@@ -156,7 +204,7 @@
             props: ['authors'],
             template: 
             `
-                <div v-if="">
+                <div>
                     <h5>Created By :</h5>
                     <div v-for="(author, index) in authors" :key="author.id">
                         {{ index + 1 }}. {{ author }}
@@ -177,13 +225,19 @@
             }
         }
 
+        const NotFound = {
+            template: `<div class="home"><h1>Halaman tidak ditemukan</h1></div>`
+        }
+
         // create local scope routes
         const routes = [
             { path: '/', component: Home },
             { path: '/blogs', component: Blogs },
             { path: '/add-blog', component: AddBlog },
             { path: '/about', component: About },
-            { path: '/contact-us', component: ContactUs }
+            { path: '/contact-us', component: ContactUs },
+            // wildcard if url not macth with route configuration show 404 page.
+            { path: '*', component: NotFound }
         ];
 
         const router = new VueRouter({
