@@ -8,10 +8,6 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 
-    <!-- Vue Js -->
-    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
-
     <!-- Custom Style -->
     <style>
         h2 {
@@ -45,9 +41,13 @@
         </div>
     </div>
 
+    <!-- Vue Js -->
+    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
+
     <script>
+        // global scope component
         Vue.component('header-component', {
-            // Save data to props to get data from parent
             props: ['message', 'status', 'vue_link'],
             template: `
                 <div>
@@ -63,7 +63,7 @@
             `
         })
 
-        // local scope variabel components
+        // local scope variabel component
         const Home = {
             template: `<div class="home"><h1>Home Page</h1></div>`
         }
@@ -82,6 +82,10 @@
                                 <button v-on:click="deleteBlog(index)" class="btn btn-danger mt-2">Delete</button>
                             </div>
                         </div>
+
+                    </div>
+                    <div v-if="blogs.length < 1">
+                        <p>Data belum tersedia</p>
                     </div>
                 </div>
             `,
@@ -107,7 +111,7 @@
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Title</label>
                                     <input type="text" class="form-control" id="title" v-model="newBlog.title">
-                                    <div class="invalid-feedback" v-if="error.title">
+                                    <div v-if="error.title" style="color:red">
                                         {{ error.title }}
                                     </div>
                                 </div>
@@ -115,7 +119,7 @@
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description</label>
                                     <textarea class="form-control" id="description" v-model="newBlog.description"></textarea>
-                                    <div class="invalid-feedback" v-if="error.description">
+                                    <div v-if="error.description" style="color:red">
                                         {{ error.description }}
                                     </div>
                                 </div>
@@ -125,9 +129,6 @@
                                     <img v-bind:src="previewImage" v-if="previewImage">
                                     <input type="file" ref="gambar" name="image" id="image" v-on:change="upload">
                                 </div>
-
-                                <div class="invalid-feedback" v-show="error.title">{{ error.title }}</div>
-                                <div class="invalid-feedback" v-show="error.description">{{ error.description }}</div>
 
                                 <button type="submit" class="btn btn-primary">Add Blog</button>
 
@@ -154,23 +155,19 @@
             },
             methods: {
                 submitBlog: function() {
-                    // check validation
                     let isValid = true;
-                    // Dalam method submitBlog:
                     if (this.newBlog.title == '') {
                         this.error.title = 'Title is required.';
-                        console.log(this.error.title);
                         isValid = false;
                     } else {
-                        this.error.title = ''; // Reset pesan kesalahan jika valid
+                        this.error.title = '';
                     }
 
                     if (this.newBlog.description == '') {
                         this.error.description = 'Description is required.';
-                        console.log(this.error.description);
                         isValid = false;
                     } else {
-                        this.error.description = ''; // Reset pesan kesalahan jika valid
+                        this.error.description = '';
                     }
 
                     if (isValid) {
@@ -254,27 +251,36 @@
                 vue_link: 'https://v2.vuejs.org/',
                 status: true,
                 authors: ['Izuchii✨', 'Hutao💖'],
-                blogs: [
-                    {
-                        'title': 'Latihan Vue.js', 
-                        'description': "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde quibusdam rerum tenetur. Suscipit, nemo a?",
-                        'image': 'logo.png'
-                    },
-                    {
-                        'title': 'Kafka', 
-                        'description': "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat ratione ex, vel blanditiis consectetur incidunt sunt necessitatibus excepturi? Libero, quod?",
-                        'image': 'kafka.png'
-                    },
-                    {
-                        'title': 'Test', 
-                        'description': "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui illum ea quisquam?",
-                        'image': 'test.jpg'
-                    },
-                ],
+                blogs: []
+                // blogs: [
+                //     {
+                //         'title': 'Latihan Vue.js', 
+                //         'description': "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde quibusdam rerum tenetur. Suscipit, nemo a?",
+                //         'image': 'logo.png'
+                //     },
+                //     {
+                //         'title': 'Kafka', 
+                //         'description': "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat ratione ex, vel blanditiis consectetur incidunt sunt necessitatibus excepturi? Libero, quod?",
+                //         'image': 'kafka.png'
+                //     },
+                //     {
+                //         'title': 'Test', 
+                //         'description': "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui illum ea quisquam?",
+                //         'image': 'test.jpg'
+                //     },
+                // ],
+            },
+            // fungsi yang otomatis dijalankan pada saat vue dibuat
+            created() {
+                // ambil local storage dengan nama localStorage dan berikan kondisi jika tidak ada
+                this.blogs = JSON.parse(localStorage.getItem('blog')) || []
             },
             methods: {
                 addBlog(newBlog) {
                     this.blogs.push(newBlog);
+                    // param1 nama parameter, param2 value item
+                    // change data JSON
+                    localStorage.setItem('blog', JSON.stringify(this.blogs))
                 },
                 deleteBlog(index) {
                     this.blogs.splice(index, 1);
