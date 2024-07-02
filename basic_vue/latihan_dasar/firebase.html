@@ -46,9 +46,26 @@
     <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBccw3tt0Xhr27CtQ2KrNztlCUDZGBDNno",
+            authDomain: "learn-vue-6c8c2.firebaseapp.com",
+            projectId: "learn-vue-6c8c2",
+            storageBucket: "learn-vue-6c8c2.appspot.com",
+            messagingSenderId: "152576003156",
+            appId: "1:152576003156:web:a3a3c70c93166bda4e71c1"
+        };
 
-    <script>
-        // global scope component
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const blogsRef = ref(database, 'blogs');
+
         Vue.component('header-component', {
             props: ['message', 'status', 'vue_link'],
             template: `
@@ -65,7 +82,6 @@
             `
         })
 
-        // local scope variabel component
         const Home = {
             template: `<div class="home"><h1>Home Page</h1></div>`
         }
@@ -80,7 +96,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ blog.title }}</h5>
                                 <p class="card-text">{{ blog.description }}</p>
-                                <a href="#" v-on:click.prevent="showAlert(blog.description)" class="btn btn-primary">Baca</a>
+                                <router-link :to="'/blog/' + blog.title" class="btn btn-primary mt-2">Baca</router-link>
                                 <button v-on:click="deleteBlog(index)" class="btn btn-danger mt-2">Delete</button>
                             </div>
                         </div>
@@ -92,13 +108,41 @@
                 </div>
             `,
             methods: {
-                showAlert: function(description) {
-                    alert(description);
-                },
                 deleteBlog: function(index) {
                     this.$emit('delete-blog', index);
                 }
             }
+        }
+
+        const Blog = {
+            template: `
+                <div>
+                    <img :src="'../image/' + blog.image" :alt="blog.title" width="200">
+                    <h1 class="text-center">{{ blog.title }}</h1>
+                    <p class="text-center">{{ blog.description }}</p>
+                    <!-- <a v-on:click="$router.go(-1)" class="btn btn-danger mt-2">Kembali</a> -->
+                    <a v-on:click="$router.back()" class="btn btn-danger mt-2">Kembali</a>
+                </div>
+            `,
+            data() {
+                return {
+                blog: {}
+                };
+            },
+            created() {
+                this.filterData()
+            },
+            methods: {
+                filterData: function() {
+                    // ambil judul dari route paremater
+                    const blogTitle = this.$route.params.title;
+                    // ambil data blog yang sudah disimpan di localStorage
+                    const blogs = JSON.parse(localStorage.getItem('blog')) || [];
+                    // find blog by title 
+                    const data = blogs.filter(blog => blog.title == blogTitle) || {};
+                    this.blog = data[0];
+                }
+            },
         }
 
         const AddBlog = {
@@ -182,13 +226,11 @@
                         };
                         this.previewImage = '';
 
-                        // reset input type file
                         this.$refs.gambar.value = '';
                     }
                 },
                 upload: function(data) {
                     const nameImage = data.target.files[0].name;
-                    // save name image to Object newBlog
                     this.newBlog.image = nameImage;
                     this.previewImage = URL.createObjectURL(data.target.files[0]);
                 }
@@ -228,10 +270,11 @@
             template: `<div class="home"><h1>Halaman tidak ditemukan</h1></div>`
         }
 
-        // create local scope routes
         const routes = [
             { path: '/', component: Home },
             { path: '/blogs', component: Blogs },
+            // : artinya mau menuju ke page lain dengan mengirimkan data melalui path url dengan nama parameter title
+            { path: '/blog/:title', component: Blog },
             { path: '/add-blog', component: AddBlog },
             { path: '/about', component: About },
             { path: '/contact-us', component: ContactUs },
@@ -246,7 +289,7 @@
 
         // vue Object
         const vm = new Vue({
-            // 'el': '.app',
+            'el': '.app',
             router,
             'data': {
                 message: "Hello Vue.js",
@@ -255,16 +298,27 @@
                 authors: ['Izuchii✨', 'Hutao💖'],
                 blogs: []
             },
-            // fungsi yang otomatis dijalankan pada saat vue dibuat
             created() {
-                // ambil local storage dengan nama localStorage dan berikan kondisi jika tidak ada
-                this.blogs = JSON.parse(localStorage.getItem('blog')) || []
+                // this.blogs = JSON.parse(localStorage.getItem('blog')) || []
+
+                // 3 parameter (referensinya, callback, fn jika ada error)
+                onValue(blogsRef, this.resultData, this.errorData);
             },
             methods: {
+                resultData(snapshot) {
+                    console.log(snapshot);
+                    const data = snapshot.val();        // val() merupakan function firebase untuk mendapatkan data
+                    if (data) {
+                        this.blogs = Object.values(data);
+                    } else {
+                        this.blogs = [];
+                    }
+                },
+                errorData(error) {
+                    console.error("Error fetching data: ", error);
+                },
                 addBlog(newBlog) {
                     this.blogs.push(newBlog);
-                    // param1 nama parameter, param2 value item
-                    // change data JSON
                     localStorage.setItem('blog', JSON.stringify(this.blogs))
 
                     Swal.fire({
@@ -285,19 +339,9 @@
                         text: "Berhasil menghapus blog",
                         icon: "success"
                     });
-                    // Swal.fire({
-                    //     title: 'Berhasil',
-                    //     text: 'Berhasil menghapus blog',
-                    //     icon:'success',
-                    //     confirmButtonText: 'OK'
-                    // }).then(() => {
-                    //     this.$router.push('/blogs');
-                    // })
                 }
             }
         });
-
-        vm.$mount('.app')
     </script>
 </body>
 </html>
